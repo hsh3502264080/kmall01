@@ -55,7 +55,6 @@ public class AttrServiceImpl implements AttrService {
             i=pmsBaseAttrValueMapper.insertBatch(attrInfo.getId(),attrInfo.getAttrValueList());
         }
         return i;
-
     }
 
     @Override
