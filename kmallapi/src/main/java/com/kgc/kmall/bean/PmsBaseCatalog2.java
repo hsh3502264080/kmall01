@@ -1,12 +1,16 @@
 package com.kgc.kmall.bean;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
-
+@ApiModel("二级分类实体类")
 public class PmsBaseCatalog2 implements Serializable {
+    @ApiModelProperty("二级分类编号")
     private Integer id;
-
+    @ApiModelProperty("二级分类name")
     private String name;
-
+    @ApiModelProperty("一级分类编号")
     private Integer catalog1Id;
 
     public Integer getId() {

@@ -14,7 +14,7 @@ public interface PmsProductSaleAttrMapper {
     int deleteByPrimaryKey(Long id);
 
     int insert(PmsProductSaleAttr record);
-
+    List<PmsProductSaleAttr> spuSaleAttrListIsCheck(@Param("spuId") Long spuId,@Param("skuId") Long skuId);
     int insertSelective(PmsProductSaleAttr record);
 
     List<PmsProductSaleAttr> selectByExample(PmsProductSaleAttrExample example);
