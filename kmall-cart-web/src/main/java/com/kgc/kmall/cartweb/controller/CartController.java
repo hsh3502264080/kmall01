@@ -32,22 +32,23 @@ public class CartController {
     CartService cartService;
 
     private BigDecimal getTotalAmount(List<OmsCartItem> omsCartItems) {
-        if (omsCartItems==null||omsCartItems.size()==0){
+        if (omsCartItems == null || omsCartItems.size() == 0) {
             return new BigDecimal(0);
         }
-        BigDecimal total=new BigDecimal(0);
+        BigDecimal total = new BigDecimal(0);
         for (OmsCartItem omsCartItem : omsCartItems) {
             //计算小计
             BigDecimal multiply = omsCartItem.getPrice().multiply(new BigDecimal(omsCartItem.getQuantity()));
             omsCartItem.setTotalPrice(multiply);
 
             //计算总价
-            if (omsCartItem.getIsChecked()!=null&&omsCartItem.getIsChecked()==1){
-                total=total.add(omsCartItem.getTotalPrice());
+            if (omsCartItem.getIsChecked() != null && omsCartItem.getIsChecked() == 1) {
+                total = total.add(omsCartItem.getTotalPrice());
             }
         }
         return total;
     }
+
     @LoginRequired(value = false)
     @RequestMapping("/addToCart")
     public String addToCart(Long skuId, Integer num, HttpServletResponse response, HttpServletRequest request) {
@@ -71,9 +72,15 @@ public class CartController {
         omsCartItem.setProductSkuId(skuId);
         omsCartItem.setQuantity(num);
         //判断用户是否登录
-        String memberId = "1";
+        String memberId = "";
+        if (request.getAttribute("memberId") != null) {
+            String mid = request.getAttribute("memberId").toString();
+            memberId=mid;
+        }
+        System.out.println("用户编号"+memberId);
         //未登录状态
         if (StringUtils.isBlank(memberId)) {
+            System.out.println("cookie" + "11111111111111111111111");
             //获取cookie里的数据
             String cartListCookie = CookieUtil.getCookieValue(request, "cartListCookie", true);
             //cookie没有数据
@@ -102,6 +109,7 @@ public class CartController {
             // 更新cookie
             CookieUtil.setCookie(request, response, "cartListCookie", JSON.toJSONString(omsCartItems), 60 * 60 * 72, true);
         } else {
+            System.out.println("DB");
             //思路二：根据用户id和skuid查询，如果不存在则添加，如果存在则修改
             // 用户已经登录 登录状态
             // 从db中查出购物车数
@@ -135,20 +143,26 @@ public class CartController {
         }
         return b;
     }
+
     @LoginRequired(false)
     @RequestMapping("/cartList")
-    public String cartList(ModelMap modelMap,HttpServletRequest request){
+    public String cartList(ModelMap modelMap, HttpServletRequest request) {
         List<OmsCartItem> omsCartItems = new ArrayList<>();
-        String memberId = "1";
+        String memberId = "";
 
-        if(StringUtils.isNotBlank(memberId)){
+        if (request.getAttribute("memberId") != null) {
+            String mid = request.getAttribute("memberId").toString();
+            memberId=mid;
+        }
+        System.out.println("用户编号"+memberId);
+        if (StringUtils.isNotBlank(memberId)) {
             // 已经登录查询db
             omsCartItems = cartService.cartList(memberId);
-        }else{
+        } else {
             // 没有登录查询cookie
             String cartListCookie = CookieUtil.getCookieValue(request, "cartListCookie", true);
-            if(StringUtils.isNotBlank(cartListCookie)){
-                omsCartItems = JSON.parseArray(cartListCookie,OmsCartItem.class);
+            if (StringUtils.isNotBlank(cartListCookie)) {
+                omsCartItems = JSON.parseArray(cartListCookie, OmsCartItem.class);
             }
         }
 
@@ -156,25 +170,32 @@ public class CartController {
         for (OmsCartItem omsCartItem : omsCartItems) {
             omsCartItem.setTotalPrice(omsCartItem.getPrice().multiply(new BigDecimal(omsCartItem.getQuantity())));
         }
-        modelMap.put("cartList",omsCartItems);
+        modelMap.put("cartList", omsCartItems);
 
         //总价
         BigDecimal totalAmount = getTotalAmount(omsCartItems);
-        System.out.println(totalAmount);
-        modelMap.put("totalAmount",totalAmount);
+        System.out.println("总价格" + totalAmount);
+        modelMap.put("totalAmount", totalAmount);
         return "cartList";
     }
+
     @LoginRequired(true)
     @RequestMapping("toTrade")
     public String toTrade() {
         return "toTrade";
     }
+
     @LoginRequired(false)
     @RequestMapping("/checkCart")
     @ResponseBody
     public Map<String, Object> checkCart(Integer isChecked, Long skuId, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> map = new HashMap<>();
-        String memberId = "1";
+        String memberId = "";
+        if (request.getAttribute("memberId") != null) {
+            String mid = request.getAttribute("memberId").toString();
+            memberId=mid;
+        }
+        System.out.println("用户编号"+memberId);
         if (StringUtils.isNotBlank(memberId)) {
             OmsCartItem omsCartItem = new OmsCartItem();
             omsCartItem.setMemberId(Long.parseLong(memberId));

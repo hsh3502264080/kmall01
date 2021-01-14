@@ -84,13 +84,17 @@
     function submitLogin() {
         var username = $("#username").val();
         var password = $("#password").val();
+        var ReturnUrl=$("#ReturnUrl").val();
         alert(username)
         alert(password)
         $.post("login",{username:username,password:password},function (token) {
             if(token=="fail"){
                 alert("用户名或者密码错误");
             }else{
-                window.location.href=$("#ReturnUrl").val()+"?token="+token;
+                if(ReturnUrl==""){
+                    ReturnUrl="http://localhost:8084";
+                }
+                window.location.href=ReturnUrl+"?token="+token;
             }
         })
     }

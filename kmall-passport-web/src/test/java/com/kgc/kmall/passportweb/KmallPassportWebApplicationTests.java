@@ -1,5 +1,7 @@
 package com.kgc.kmall.passportweb;
 
+import com.alibaba.fastjson.JSON;
+import com.kgc.kmall.util.HttpclientUtil;
 import com.kgc.kmall.util.JwtUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,3 +29,5 @@ class KmallPassportWebApplicationTests {
 	}
 
 }
+
+

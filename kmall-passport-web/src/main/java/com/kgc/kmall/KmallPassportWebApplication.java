@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class KmallPassportWebApplication {
 
 	public static void main(String[] args) {
+
+
 		SpringApplication.run(KmallPassportWebApplication.class, args);
 	}
 
