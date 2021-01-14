@@ -1,5 +1,6 @@
 package com.kgc.kmall.bean;
 
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -88,5 +89,20 @@ public class PmsSearchSkuInfo implements Serializable {
 
     public void setSkuAttrValueList(List<PmsSkuAttrValue> skuAttrValueList) {
         this.skuAttrValueList = skuAttrValueList;
+    }
+
+    @Override
+    public String toString() {
+        return "PmsSearchSkuInfo{" +
+                "id=" + id +
+                ", skuName='" + skuName + '\'' +
+                ", skuDesc='" + skuDesc + '\'' +
+                ", catalog3Id=" + catalog3Id +
+                ", price=" + price +
+                ", skuDefaultImg='" + skuDefaultImg + '\'' +
+                ", hotScore=" + hotScore +
+                ", productId=" + productId +
+                ", skuAttrValueList=" + skuAttrValueList +
+                '}';
     }
 }

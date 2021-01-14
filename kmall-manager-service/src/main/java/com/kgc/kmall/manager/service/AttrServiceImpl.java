@@ -1,17 +1,16 @@
 package com.kgc.kmall.manager.service;
 
-import com.kgc.kmall.bean.PmsBaseAttrInfo;
-import com.kgc.kmall.bean.PmsBaseAttrInfoExample;
-import com.kgc.kmall.bean.PmsBaseAttrValue;
-import com.kgc.kmall.bean.PmsBaseAttrValueExample;
+import com.kgc.kmall.bean.*;
 import com.kgc.kmall.manager.mapper.PmsBaseAttrInfoMapper;
 import com.kgc.kmall.manager.mapper.PmsBaseAttrValueMapper;
 import com.kgc.kmall.service.AttrService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author shkstart
@@ -27,12 +26,12 @@ public class AttrServiceImpl implements AttrService {
 
     @Override
     public List<PmsBaseAttrInfo> select(Long catalog3Id) {
-        PmsBaseAttrInfoExample example=new PmsBaseAttrInfoExample();
+        PmsBaseAttrInfoExample example = new PmsBaseAttrInfoExample();
         PmsBaseAttrInfoExample.Criteria criteria = example.createCriteria();
         criteria.andCatalog3IdEqualTo(catalog3Id);
         List<PmsBaseAttrInfo> infoList = pmsBaseAttrInfoMapper.selectByExample(example);
         for (PmsBaseAttrInfo pmsBaseAttrInfo : infoList) {
-            PmsBaseAttrValueExample example1=new PmsBaseAttrValueExample();
+            PmsBaseAttrValueExample example1 = new PmsBaseAttrValueExample();
             PmsBaseAttrValueExample.Criteria criteria1 = example1.createCriteria();
             criteria1.andAttrIdEqualTo(pmsBaseAttrInfo.getId());
             List<PmsBaseAttrValue> pmsBaseAttrValues = pmsBaseAttrValueMapper.selectByExample(example1);
@@ -43,34 +42,46 @@ public class AttrServiceImpl implements AttrService {
 
     @Override
     public Integer add(PmsBaseAttrInfo attrInfo) {
-        int i=0;
+        int i = 0;
         //判断是添加还是修改
-        if (attrInfo.getId()==null){
+        if (attrInfo.getId() == null) {
             //添加
             i = pmsBaseAttrInfoMapper.insert(attrInfo);
-        }else{
+        } else {
             //修改
-            i=pmsBaseAttrInfoMapper.updateByPrimaryKey(attrInfo);
+            i = pmsBaseAttrInfoMapper.updateByPrimaryKey(attrInfo);
         }
         //删除原属性值
-        PmsBaseAttrValueExample example=new PmsBaseAttrValueExample();
+        PmsBaseAttrValueExample example = new PmsBaseAttrValueExample();
         PmsBaseAttrValueExample.Criteria criteria = example.createCriteria();
         criteria.andAttrIdEqualTo(attrInfo.getId());
         i = pmsBaseAttrValueMapper.deleteByExample(example);
         //添加新属性值
-        if (attrInfo.getAttrValueList().size()>0){
-            i=pmsBaseAttrValueMapper.insertBatch(attrInfo.getId(),attrInfo.getAttrValueList());
+        if (attrInfo.getAttrValueList().size() > 0) {
+            i = pmsBaseAttrValueMapper.insertBatch(attrInfo.getId(), attrInfo.getAttrValueList());
         }
         return i;
     }
 
     @Override
     public List<PmsBaseAttrValue> getAttrValueList(Long attrId) {
-        PmsBaseAttrValueExample example=new PmsBaseAttrValueExample();
+        PmsBaseAttrValueExample example = new PmsBaseAttrValueExample();
         PmsBaseAttrValueExample.Criteria criteria = example.createCriteria();
         criteria.andAttrIdEqualTo(attrId);
         List<PmsBaseAttrValue> valueList = pmsBaseAttrValueMapper.selectByExample(example);
         return valueList;
 
     }
+
+    @Override
+    public List<PmsBaseAttrInfo> selectAttrInfoValueListByValueId(Set<Long> valueIds) {
+        String join = StringUtils.join(valueIds);
+        join = join.substring(1, join.length() - 1);
+        System.out.println(join);
+        List<PmsBaseAttrInfo> pmsBaseAttrInfos = pmsBaseAttrInfoMapper.selectAttrInfoValueListByValueId(join);
+
+        return pmsBaseAttrInfos;
+    }
+
+
 }

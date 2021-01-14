@@ -28,4 +28,5 @@ public interface PmsBaseAttrInfoMapper {
     int updateByPrimaryKeySelective(PmsBaseAttrInfo record);
 
     int updateByPrimaryKey(PmsBaseAttrInfo record);
+    List<PmsBaseAttrInfo> selectAttrInfoValueListByValueId(@Param("valueIdStr")String valueIdStr);
 }
